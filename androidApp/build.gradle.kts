@@ -12,10 +12,13 @@ kotlin {
     }
 }
 dependencies {
+    implementation(libs.androidx.material3)
     implementation(projects.sharedUI)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
+
+    implementation(libs.voyager.navigator)
 
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)

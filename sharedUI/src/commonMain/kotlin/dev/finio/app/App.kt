@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.finio.app.navigation.AppNavigator
+import dev.finio.auth.domain.model.AuthState
 import dev.finio.auth.presentation.AuthViewModel
 import org.jetbrains.compose.resources.painterResource
 
@@ -27,7 +28,7 @@ fun App() {
     val authViewModel: AuthViewModel = koinInject()
     val authState by authViewModel.state.collectAsState()
 
-    val isLoggedIn = authState is dev.finio.auth.domain.model.AuthState.Authenticated
+    val isLoggedIn = authState is AuthState.Authenticated
 
     AppNavigator(isLoggedIn = isLoggedIn)
 }
