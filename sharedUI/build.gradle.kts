@@ -39,6 +39,10 @@ kotlin {
             implementation(compose.uiTooling)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.screenmodel)
+            implementation(libs.voyager.koin)
+            implementation(libs.koin.compose)
         }
         androidMain.dependencies {
             implementation(compose.uiTooling)
