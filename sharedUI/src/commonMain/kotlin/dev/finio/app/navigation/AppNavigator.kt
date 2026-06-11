@@ -10,6 +10,6 @@ fun AppNavigator(isLoggedIn: Boolean){
     val startScreen = if(isLoggedIn) HomeScreen else LoginScreen
 
     Navigator(startScreen){ navigator ->
-        navigator.lastItem
+        navigator.lastItem.Content()
     }
 }
