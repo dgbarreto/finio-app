@@ -43,6 +43,7 @@ kotlin {
             implementation(compose.uiTooling)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tab.navigator)
             implementation(libs.voyager.screenmodel)

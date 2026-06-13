@@ -54,3 +54,11 @@ dependencyResolutionManagement {
 include(":androidApp")
 include(":sharedLogic")
 include(":sharedUI")
+
+if (localProperties["useLocalTransactions"] == "true") {
+    includeBuild("../finio-transaction") {
+        dependencySubstitution {
+            substitute(module("dev.finio:transactions-kmp")).using(project(":transactions"))
+        }
+    }
+}
