@@ -41,7 +41,7 @@ finio-design-system = { module = "dev.finio:design-system-kmp", version = "0.1.0
 finio-auth = { module = "dev.finio:auth-kmp", version = "0.1.0" }
 finio-transaction = { module = "dev.finio:transactions-kmp", version = "0.1.2" }
 finio-budget = { module = "dev.finio:budget-kmp", version = "0.1.1" }
-finio-insights = { module = "dev.finio:insights-kmp", version = "0.1.0" }
+finio-insights = { module = "dev.finio:insights-kmp", version = "0.1.1" }
 
 # Android
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }

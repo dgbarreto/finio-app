@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.unit.dp
 import dev.finio.budget.domain.model.Budget
+import dev.finio.budget.domain.repository.BudgetRepositoryImpl
 
 @Composable
 fun BudgetItem(budget: Budget, onDelete: () -> Unit){
