@@ -61,4 +61,9 @@ if (localProperties["useLocalTransactions"] == "true") {
             substitute(module("dev.finio:transactions-kmp")).using(project(":transactions"))
         }
     }
+    includeBuild("../finio-budget"){
+        dependencySubstitution {
+            substitute(module("dev.finio:budget-kmp")).using(project(":budget"))
+        }
+    }
 }
