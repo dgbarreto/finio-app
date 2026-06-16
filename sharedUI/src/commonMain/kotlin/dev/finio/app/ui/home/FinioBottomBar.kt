@@ -6,6 +6,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import dev.finio.app.ui.auth.ProfileTab
 import dev.finio.app.ui.budget.BudgetTab
 import dev.finio.app.ui.insights.InsightsTab
 import dev.finio.app.ui.transactions.TransactionsTab
@@ -15,7 +16,7 @@ fun FinioBottomBar(){
     val tabNavigator = LocalTabNavigator.current
 
     NavigationBar {
-        listOf(HomeTab, TransactionsTab, BudgetTab, InsightsTab).forEach { tab ->
+        listOf(HomeTab, TransactionsTab, BudgetTab, InsightsTab, ProfileTab).forEach { tab ->
             NavigationBarItem(
                 selected = tabNavigator.current == tab,
                 onClick = { tabNavigator.current = tab },

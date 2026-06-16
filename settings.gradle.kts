@@ -71,4 +71,9 @@ if (localProperties["useLocalTransactions"] == "true") {
             substitute(module("dev.finio:insights-kmp")).using(project(":insights"))
         }
     }
+    includeBuild("../finio-auth"){
+        dependencySubstitution {
+            substitute(module("dev.finio:auth-kmp")).using(project(":auth"))
+        }
+    }
 }
