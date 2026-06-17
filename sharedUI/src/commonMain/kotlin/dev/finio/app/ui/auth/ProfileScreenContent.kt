@@ -41,9 +41,7 @@ import dev.finio.designsystem.theme.FinioTypography
 import org.koin.compose.koinInject
 
 @Composable
-fun ProfileScreenContent(
-    onLoggedOut: () -> Unit,
-){
+fun ProfileScreenContent(){
     val viewModel: AuthViewModel = koinInject()
     val state by viewModel.state.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -52,10 +50,6 @@ fun ProfileScreenContent(
         viewModel.loadProfile()
     }
 
-    LaunchedEffect(state){
-        if(state is AuthState.Unauthenticated) onLoggedOut()
-    }
-    
     if(showLogoutDialog){
         FinioDialog(
             title = "Log out",
