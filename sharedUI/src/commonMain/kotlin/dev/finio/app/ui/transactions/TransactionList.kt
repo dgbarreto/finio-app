@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dev.finio.designsystem.component.FinioCardTransaction
+import dev.finio.designsystem.component.FinioTransactionType
 import dev.finio.transactions.domain.model.Transaction
 import dev.finio.transactions.domain.model.TransactionType
 
@@ -33,29 +35,12 @@ fun TransactionList(transactions: List<Transaction>){
 
 @Composable
 fun TransactionItem(transaction: Transaction){
-    Card(modifier = Modifier.fillMaxWidth()){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(transaction.title)
-                Text(transaction.category.name)
-            }
-
-            val color = if(transaction.type == TransactionType.INCOME){
-                Color(0xFF2E7D32)
-            } else {
-                Color(0xFFC62828)
-            }
-            val sign = if(transaction.type == TransactionType.INCOME) "+" else "-"
-
-            Text(
-                text = "$sign${ transaction.amount }",
-                color = color
-            )
-        }
-    }
+    FinioCardTransaction(
+        description = transaction.title,
+        category = transaction.category.name,
+        amount = transaction.amount.toString(),
+        date = transaction.date,
+        type = if(transaction.type == TransactionType.INCOME)
+            FinioTransactionType.Income else FinioTransactionType.Expense
+    )
 }

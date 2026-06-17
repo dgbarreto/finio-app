@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import dev.finio.budget.presentation.BudgetState
 import dev.finio.budget.presentation.BudgetViewModel
+import dev.finio.designsystem.component.FinioEmptyState
+import dev.finio.designsystem.component.FinioErrorState
 import org.koin.compose.koinInject
 
 @Composable
@@ -59,18 +61,18 @@ fun BudgetScreenContent(){
                     }
                 }
                 is BudgetState.Error -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                        Text("Error: ${current.message}")
-                    }
+                    FinioErrorState(
+                        message = current.message,
+                        onRetry = { viewModel.load() }
+                    )
                 }
                 is BudgetState.Success -> {
                     if (current.budgets.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("No budgets yet.")
-                        }
+                        FinioEmptyState(
+                            icon = "🎯",
+                            title = "No budgets yet",
+                            message = "Created a budget to start tracking your spending limits."
+                        )
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),

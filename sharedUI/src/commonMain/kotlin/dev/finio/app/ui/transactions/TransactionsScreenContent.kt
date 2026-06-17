@@ -21,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.LineHeightStyle
+import dev.finio.designsystem.component.FinioEmptyState
+import dev.finio.designsystem.component.FinioErrorState
 import dev.finio.transactions.domain.model.Transaction
 import dev.finio.transactions.presentation.TransactionState
 import dev.finio.transactions.presentation.TransactionViewModel
@@ -56,15 +58,18 @@ fun TransactionsScreenContent(){
                     }
                 }
                 is TransactionState.Error -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                        Text("Error: ${current.message}")
-                    }
+                    FinioErrorState(
+                        message = current.message,
+                        onRetry = { viewModel.sync() }
+                    )
                 }
                 is TransactionState.Success -> {
                     if(current.transactions.isEmpty()){
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                            Text("No transactions yet")
-                        }
+                        FinioEmptyState(
+                            icon = "💸",
+                            title = "No transactions yet",
+                            message = "Tap the + button to add your first transaction"
+                        )
                     } else {
                         TransactionList(transactions = current.transactions)
                     }

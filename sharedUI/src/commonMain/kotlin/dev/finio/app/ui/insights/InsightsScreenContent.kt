@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import dev.finio.designsystem.component.FinioBody
 import dev.finio.designsystem.component.FinioCard
+import dev.finio.designsystem.component.FinioErrorState
 import dev.finio.designsystem.component.FinioHeadline
 import dev.finio.designsystem.component.FinioLabel
 import dev.finio.designsystem.theme.FinioColors
@@ -150,8 +151,12 @@ fun InsightsScreenContent(){
                 contentAlignment = Alignment.Center
             ){ CircularProgressIndicator(color = FinioColors.primary) }
 
-            state.error != null -> Text(
-                text = state.error ?: "Failed to load insights"
+            state.error != null -> FinioErrorState(
+                message = state.error!!,
+                onRetry = {
+                    val (start, end) = selectedPeriod.toDateRange()
+                    viewModel.loadAll(start, end, selectedPeriod.evolutionMonths)
+                }
             )
 
             else -> {
