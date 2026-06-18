@@ -14,6 +14,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,95 +39,114 @@ fun BudgetScreenContent(){
     val state by viewModel.state.collectAsState()
     var showCreateDialog by remember { mutableStateOf(false) }
     var editingBudget by remember { mutableStateOf<Budget?>(null) }
+    var isRefreshing by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit){
         viewModel.load()
     }
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = { showCreateDialog = true }){
-                Icon(Icons.Filled.Add, contentDescription = "Add Budget")
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            viewModel.load()
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(onClick = { showCreateDialog = true }) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add Budget")
+                }
             }
-        }
-    ){ padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(padding),
-            contentAlignment = Alignment.Center
-        ){
-            when(val current = state){
-                is BudgetState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                        CircularProgressIndicator()
-                    }
-                }
-                is BudgetState.Error -> {
-                    FinioErrorState(
-                        message = current.message,
-                        onRetry = { viewModel.load() }
-                    )
-                }
-                is BudgetState.Success -> {
-                    if (current.budgets.isEmpty()) {
-                        FinioEmptyState(
-                            icon = "🎯",
-                            title = "No budgets yet",
-                            message = "Created a budget to start tracking your spending limits."
-                        )
-                    } else {
-                        LazyColumn(
+        ) { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                when (val current = state) {
+                    is BudgetState.Loading -> {
+                        Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp)
+                            contentAlignment = Alignment.Center
                         ) {
-                            items(current.budgets) { budget ->
-                                BudgetItem(
-                                    budget = budget,
-                                    onDelete = { viewModel.deleteBudget(budget.id) },
-                                    onChange = {
-                                        editingBudget = it
-                                    }
-                                )
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is BudgetState.Error -> {
+                        FinioErrorState(
+                            message = current.message,
+                            onRetry = { viewModel.load() }
+                        )
+                    }
+
+                    is BudgetState.Success -> {
+                        if (current.budgets.isEmpty()) {
+                            FinioEmptyState(
+                                icon = "🎯",
+                                title = "No budgets yet",
+                                message = "Created a budget to start tracking your spending limits."
+                            )
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                items(current.budgets) { budget ->
+                                    BudgetItem(
+                                        budget = budget,
+                                        onDelete = { viewModel.deleteBudget(budget.id) },
+                                        onChange = {
+                                            editingBudget = it
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
-        if(showCreateDialog){
-            CreateBudgetDialog(
-                onDismiss = { showCreateDialog = false },
-                onConfirm = { category, limit, period, startDate, endDate ->
-                    viewModel.createBudget(
-                        category = category.lowercase(),
-                        limit = limit,
-                        period = period,
-                        startDate = startDate,
-                        endDate = endDate
-                    )
-                    showCreateDialog = false
-                }
-            )
-        }
+            if (showCreateDialog) {
+                CreateBudgetDialog(
+                    onDismiss = { showCreateDialog = false },
+                    onConfirm = { category, limit, period, startDate, endDate ->
+                        viewModel.createBudget(
+                            category = category.lowercase(),
+                            limit = limit,
+                            period = period,
+                            startDate = startDate,
+                            endDate = endDate
+                        )
+                        showCreateDialog = false
+                    }
+                )
+            }
 
-        editingBudget?.let {
-            CreateBudgetDialog(
-                onDismiss = { editingBudget = null },
-                onConfirm = { category, limit, period, startDate, endDate ->
-                    viewModel.updateBudget(
-                        id = it.id,
-                        category = category.lowercase(),
-                        limit = limit,
-                        period = period,
-                        startDate = startDate,
-                        endDate = endDate
-                    )
-                    editingBudget = null
-                },
-                editingBudget = it
-            )
+            editingBudget?.let {
+                CreateBudgetDialog(
+                    onDismiss = { editingBudget = null },
+                    onConfirm = { category, limit, period, startDate, endDate ->
+                        viewModel.updateBudget(
+                            id = it.id,
+                            category = category.lowercase(),
+                            limit = limit,
+                            period = period,
+                            startDate = startDate,
+                            endDate = endDate
+                        )
+                        editingBudget = null
+                    },
+                    editingBudget = it
+                )
+            }
         }
+    }
+
+    LaunchedEffect(state){
+        if(state !is BudgetState.Loading) isRefreshing = false
     }
 }

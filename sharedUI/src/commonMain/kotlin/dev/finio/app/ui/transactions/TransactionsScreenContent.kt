@@ -11,6 +11,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,82 +36,103 @@ fun TransactionsScreenContent(){
     val state by viewModel.state.collectAsState()
     var showCreatedDialog by remember { mutableStateOf(false) }
     var editingTransaction by remember { mutableStateOf<Transaction?>(null) }
+    var isRefreshing by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit){
         viewModel.sync()
     }
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = { showCreatedDialog = true }){
-                Icon(Icons.Filled.Add, contentDescription = "Add Transaction")
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            viewModel.sync()
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(onClick = { showCreatedDialog = true }) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add Transaction")
+                }
             }
-        }
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ){
-            when(val current = state){
-                is TransactionState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                        CircularProgressIndicator()
+        ) { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                when (val current = state) {
+                    is TransactionState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
-                is TransactionState.Error -> {
-                    FinioErrorState(
-                        message = current.message,
-                        onRetry = { viewModel.sync() }
-                    )
-                }
-                is TransactionState.Success -> {
-                    if(current.transactions.isEmpty()){
-                        FinioEmptyState(
-                            icon = "💸",
-                            title = "No transactions yet",
-                            message = "Tap the + button to add your first transaction"
+
+                    is TransactionState.Error -> {
+                        FinioErrorState(
+                            message = current.message,
+                            onRetry = { viewModel.sync() }
                         )
-                    } else {
-                        TransactionList(transactions = current.transactions, onTransactionSelected = {
-                            editingTransaction = it
-                        })
+                    }
+
+                    is TransactionState.Success -> {
+                        if (current.transactions.isEmpty()) {
+                            FinioEmptyState(
+                                icon = "💸",
+                                title = "No transactions yet",
+                                message = "Tap the + button to add your first transaction"
+                            )
+                        } else {
+                            TransactionList(
+                                transactions = current.transactions,
+                                onTransactionSelected = {
+                                    editingTransaction = it
+                                })
+                        }
                     }
                 }
             }
-        }
 
-        if(showCreatedDialog){
-            CreateTransactionDialog(
-                onDismiss = { showCreatedDialog = false },
-                onConfirm = { title, amount, type, category ->
-                    viewModel.createTransaction(
-                        title = title,
-                        amount = amount,
-                        type = type,
-                        category = category,
-                        date = Clock.System.now().toString()
-                    )
-                    showCreatedDialog = false
-                }
-            )
-        }
+            if (showCreatedDialog) {
+                CreateTransactionDialog(
+                    onDismiss = { showCreatedDialog = false },
+                    onConfirm = { title, amount, type, category ->
+                        viewModel.createTransaction(
+                            title = title,
+                            amount = amount,
+                            type = type,
+                            category = category,
+                            date = Clock.System.now().toString()
+                        )
+                        showCreatedDialog = false
+                    }
+                )
+            }
 
-        editingTransaction?.let {
-            CreateTransactionDialog(
-                editingTransaction = editingTransaction,
-                onDismiss = { editingTransaction = null },
-                onConfirm = { title, amount, type, category ->
-                    viewModel.updateTransaction(
-                        id = it.id,
-                        title = title,
-                        amount = amount,
-                        type = type,
-                        category = category,
-                    )
-                    editingTransaction = null
-                }
-            )
+            editingTransaction?.let {
+                CreateTransactionDialog(
+                    editingTransaction = editingTransaction,
+                    onDismiss = { editingTransaction = null },
+                    onConfirm = { title, amount, type, category ->
+                        viewModel.updateTransaction(
+                            id = it.id,
+                            title = title,
+                            amount = amount,
+                            type = type,
+                            category = category,
+                        )
+                        editingTransaction = null
+                    }
+                )
+            }
         }
+    }
+
+    LaunchedEffect(state){
+        if (state !is TransactionState.Loading) isRefreshing = false
     }
 }

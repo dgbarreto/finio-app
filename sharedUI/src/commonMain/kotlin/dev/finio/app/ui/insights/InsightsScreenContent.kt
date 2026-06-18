@@ -25,6 +25,7 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -131,52 +132,67 @@ fun InsightsScreenContent(){
     val viewModel: InsightsViewModel = koinInject()
     val state by viewModel.state.collectAsState()
     var selectedPeriod by remember { mutableStateOf(InsightsPeriod.THIS_MONTH) }
+    var isRefreshing by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedPeriod){
         val (start, end) = selectedPeriod.toDateRange()
         viewModel.loadAll(start, end, selectedPeriod.evolutionMonths)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(FinioSpacing.md)
-    ){
-        PeriodSelector(selected = selectedPeriod, onPeriodSelected = { selectedPeriod = it })
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            val (start, end) = selectedPeriod.toDateRange()
+            viewModel.loadAll(start, end, selectedPeriod.evolutionMonths)
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(FinioSpacing.md)
+        ) {
+            PeriodSelector(selected = selectedPeriod, onPeriodSelected = { selectedPeriod = it })
 
-        when{
-            state.isLoading -> Box(
-                modifier = Modifier.fillMaxWidth().padding(vertical = FinioSpacing.xl),
-                contentAlignment = Alignment.Center
-            ){ CircularProgressIndicator(color = FinioColors.primary) }
+            when {
+                state.isLoading -> Box(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = FinioSpacing.xl),
+                    contentAlignment = Alignment.Center
+                ) { CircularProgressIndicator(color = FinioColors.primary) }
 
-            state.error != null -> FinioErrorState(
-                message = state.error!!,
-                onRetry = {
-                    val (start, end) = selectedPeriod.toDateRange()
-                    viewModel.loadAll(start, end, selectedPeriod.evolutionMonths)
-                }
-            )
+                state.error != null -> FinioErrorState(
+                    message = state.error!!,
+                    onRetry = {
+                        val (start, end) = selectedPeriod.toDateRange()
+                        viewModel.loadAll(start, end, selectedPeriod.evolutionMonths)
+                    }
+                )
 
-            else -> {
-                state.summary?.let {
-                    Spacer(Modifier.height(20.dp))
-                    SummarySection(it)
-                }
+                else -> {
+                    state.summary?.let {
+                        Spacer(Modifier.height(20.dp))
+                        SummarySection(it)
+                    }
 
-                if(state.spendingByCategory.isNotEmpty()){
-                    Spacer(Modifier.height(20.dp))
-                    FinioHeadline("Spending by Category")
-                    SpendingByCategorySection(state.spendingByCategory)
-                }
+                    if (state.spendingByCategory.isNotEmpty()) {
+                        Spacer(Modifier.height(20.dp))
+                        FinioHeadline("Spending by Category")
+                        SpendingByCategorySection(state.spendingByCategory)
+                    }
 
-                if(state.monthlyEvolution.isNotEmpty()){
-                    FinioHeadline("Monthly Evolution")
-                    MonthlyEvolutionChart(state.monthlyEvolution)
+                    if (state.monthlyEvolution.isNotEmpty()) {
+                        FinioHeadline("Monthly Evolution")
+                        MonthlyEvolutionChart(state.monthlyEvolution)
+                    }
                 }
             }
         }
+    }
+
+    LaunchedEffect(state.isLoading){
+        if (!state.isLoading) isRefreshing = false
     }
 }
 

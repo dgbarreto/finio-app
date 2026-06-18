@@ -6,6 +6,10 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import dev.finio.app.ui.budget.BudgetTab
+import dev.finio.app.ui.transactions.TransactionsTab
 
 object HomeTab: Tab{
     override val options: TabOptions
@@ -18,6 +22,11 @@ object HomeTab: Tab{
 
     @Composable
     override fun Content(){
-        HomeScreenContent()
+        val tabNavigator = LocalTabNavigator.current
+
+        HomeScreenContent(
+            onSeeAllBudgets = { tabNavigator.current = BudgetTab },
+            onSeeAllTransactions = { tabNavigator.current = TransactionsTab }
+        )
     }
 }
