@@ -13,38 +13,53 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.unit.dp
 import dev.finio.budget.domain.model.Budget
 import dev.finio.budget.domain.repository.BudgetRepositoryImpl
+import dev.finio.designsystem.component.FinioButton
+import dev.finio.designsystem.component.FinioButtonVariant
+import dev.finio.designsystem.component.FinioCard
+import dev.finio.designsystem.component.FinioHeadline
+import dev.finio.designsystem.component.FinioLabel
+import dev.finio.designsystem.theme.FinioColors
+import dev.finio.designsystem.theme.FinioSpacing
 
 @Composable
-fun BudgetItem(budget: Budget, onDelete: () -> Unit){
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)){
-        Column(modifier = Modifier.padding(16.dp)){
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                Text(budget.category)
-                IconButton(onClick = onDelete){
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete Budget")
-                }
+fun BudgetItem(budget: Budget, onDelete: () -> Unit, onChange: ((Budget) -> Unit)?){
+    FinioCard(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+    ){
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Column(modifier = Modifier.weight(1f)){
+                FinioHeadline(budget.category)
+                FinioLabel("${budget.spent} of ${budget.limit}")
             }
-
-            Text("Limit: ${budget.limit}")
-            Text("Spent: ${budget.spent} (${budget.percentage}%)")
-            Text("Remaining: ${budget.remaining}")
-
-            val progressColor = if(budget.exceeded) Color(0xFFC62828) else Color(0xFF2E7D32)
-
-            LinearProgressIndicator(
-                progress = { (budget.percentage / 100f).coerceIn(0f, 1f) },
-                color = progressColor,
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-            )
+            Row {
+                FinioButton(
+                    text = "Edit",
+                    onClick = { onChange?.invoke(budget) },
+                    variant = FinioButtonVariant.Ghost
+                )
+                FinioButton(
+                    text = "Delete",
+                    onClick = onDelete,
+                    variant = FinioButtonVariant.Ghost
+                )
+            }
         }
+        LinearProgressIndicator(
+            progress = { (budget.spent / budget.limit).toFloat().coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth().padding(top = FinioSpacing.xs),
+            color = if(budget.exceeded) FinioColors.error else FinioColors.primary,
+            trackColor = FinioColors.surfaceVariant
+        )
     }
 }

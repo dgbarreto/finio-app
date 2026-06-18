@@ -21,26 +21,29 @@ import dev.finio.transactions.domain.model.Transaction
 import dev.finio.transactions.domain.model.TransactionType
 
 @Composable
-fun TransactionList(transactions: List<Transaction>){
+fun TransactionList(transactions: List<Transaction>, onTransactionSelected: ((transaction: Transaction) -> Unit)? = null){
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(transactions){ transaction ->
-            TransactionItem(transaction)
+            TransactionItem(transaction, onTransactionSelected)
         }
     }
 }
 
 @Composable
-fun TransactionItem(transaction: Transaction){
+fun TransactionItem(transaction: Transaction, onTransactionSelected: ((transaction: Transaction) -> Unit)? = null){
     FinioCardTransaction(
         description = transaction.title,
         category = transaction.category.name,
         amount = transaction.amount.toString(),
         date = transaction.date,
         type = if(transaction.type == TransactionType.INCOME)
-            FinioTransactionType.Income else FinioTransactionType.Expense
+            FinioTransactionType.Income else FinioTransactionType.Expense,
+        onClick = {
+            onTransactionSelected?.invoke(transaction)
+        }
     )
 }

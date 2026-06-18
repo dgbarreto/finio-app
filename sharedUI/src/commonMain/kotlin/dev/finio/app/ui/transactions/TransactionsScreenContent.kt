@@ -34,6 +34,7 @@ fun TransactionsScreenContent(){
     val viewModel: TransactionViewModel = koinInject()
     val state by viewModel.state.collectAsState()
     var showCreatedDialog by remember { mutableStateOf(false) }
+    var editingTransaction by remember { mutableStateOf<Transaction?>(null) }
 
     LaunchedEffect(Unit){
         viewModel.sync()
@@ -71,7 +72,9 @@ fun TransactionsScreenContent(){
                             message = "Tap the + button to add your first transaction"
                         )
                     } else {
-                        TransactionList(transactions = current.transactions)
+                        TransactionList(transactions = current.transactions, onTransactionSelected = {
+                            editingTransaction = it
+                        })
                     }
                 }
             }
@@ -80,7 +83,7 @@ fun TransactionsScreenContent(){
         if(showCreatedDialog){
             CreateTransactionDialog(
                 onDismiss = { showCreatedDialog = false },
-                onCreate = { title, amount, type, category ->
+                onConfirm = { title, amount, type, category ->
                     viewModel.createTransaction(
                         title = title,
                         amount = amount,
@@ -89,6 +92,23 @@ fun TransactionsScreenContent(){
                         date = Clock.System.now().toString()
                     )
                     showCreatedDialog = false
+                }
+            )
+        }
+
+        editingTransaction?.let {
+            CreateTransactionDialog(
+                editingTransaction = editingTransaction,
+                onDismiss = { editingTransaction = null },
+                onConfirm = { title, amount, type, category ->
+                    viewModel.updateTransaction(
+                        id = it.id,
+                        title = title,
+                        amount = amount,
+                        type = type,
+                        category = category,
+                    )
+                    editingTransaction = null
                 }
             )
         }

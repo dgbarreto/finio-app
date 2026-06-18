@@ -55,23 +55,26 @@ include(":androidApp")
 include(":sharedLogic")
 include(":sharedUI")
 
-if (localProperties["useLocalTransactions"] == "true") {
+// Handle composite builds for local development
+val useLocalTransactions = localProperties["useLocalTransactions"] == "true"
+
+if (useLocalTransactions) {
     includeBuild("../finio-transaction") {
         dependencySubstitution {
             substitute(module("dev.finio:transactions-kmp")).using(project(":transactions"))
         }
     }
-    includeBuild("../finio-budget"){
+    includeBuild("../finio-budget") {
         dependencySubstitution {
             substitute(module("dev.finio:budget-kmp")).using(project(":budget"))
         }
     }
-    includeBuild("../finio-insights"){
+    includeBuild("../finio-insights") {
         dependencySubstitution {
             substitute(module("dev.finio:insights-kmp")).using(project(":insights"))
         }
     }
-    includeBuild("../finio-auth"){
+    includeBuild("../finio-auth") {
         dependencySubstitution {
             substitute(module("dev.finio:auth-kmp")).using(project(":auth"))
         }

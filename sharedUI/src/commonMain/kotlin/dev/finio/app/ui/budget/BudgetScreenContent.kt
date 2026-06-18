@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import dev.finio.budget.domain.model.Budget
 import dev.finio.budget.presentation.BudgetState
 import dev.finio.budget.presentation.BudgetViewModel
 import dev.finio.designsystem.component.FinioEmptyState
@@ -36,6 +37,7 @@ fun BudgetScreenContent(){
     val viewModel: BudgetViewModel = koinInject()
     val state by viewModel.state.collectAsState()
     var showCreateDialog by remember { mutableStateOf(false) }
+    var editingBudget by remember { mutableStateOf<Budget?>(null) }
 
     LaunchedEffect(Unit){
         viewModel.load()
@@ -81,7 +83,10 @@ fun BudgetScreenContent(){
                             items(current.budgets) { budget ->
                                 BudgetItem(
                                     budget = budget,
-                                    onDelete = { viewModel.deleteBudget(budget.id) }
+                                    onDelete = { viewModel.deleteBudget(budget.id) },
+                                    onChange = {
+                                        editingBudget = it
+                                    }
                                 )
                             }
                         }
@@ -93,9 +98,9 @@ fun BudgetScreenContent(){
         if(showCreateDialog){
             CreateBudgetDialog(
                 onDismiss = { showCreateDialog = false },
-                onCreate = { category, limit, period, startDate, endDate ->
+                onConfirm = { category, limit, period, startDate, endDate ->
                     viewModel.createBudget(
-                        category = category,
+                        category = category.lowercase(),
                         limit = limit,
                         period = period,
                         startDate = startDate,
@@ -103,6 +108,24 @@ fun BudgetScreenContent(){
                     )
                     showCreateDialog = false
                 }
+            )
+        }
+
+        editingBudget?.let {
+            CreateBudgetDialog(
+                onDismiss = { editingBudget = null },
+                onConfirm = { category, limit, period, startDate, endDate ->
+                    viewModel.updateBudget(
+                        id = it.id,
+                        category = category.lowercase(),
+                        limit = limit,
+                        period = period,
+                        startDate = startDate,
+                        endDate = endDate
+                    )
+                    editingBudget = null
+                },
+                editingBudget = it
             )
         }
     }
