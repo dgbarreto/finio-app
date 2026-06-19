@@ -57,6 +57,7 @@ import dev.finio.designsystem.theme.FinioColors
 import dev.finio.designsystem.theme.FinioShape
 import dev.finio.designsystem.theme.FinioSpacing
 import dev.finio.designsystem.theme.FinioTypography
+import dev.finio.designsystem.util.FinioFormat
 import dev.finio.insights.domain.model.InsightsSummary
 import dev.finio.insights.domain.model.MonthlyEvolution
 import dev.finio.insights.domain.model.SpendingByCategory
@@ -116,15 +117,6 @@ private val monthNames = listOf(
 )
 
 private fun MonthlyEvolution.shortLabel() = monthNames[(month -1).coerceIn(0, 11)]
-
-private fun formatCurrency(value: Double): String{
-    val sign = if(value < 0) "-" else ""
-    val abs = kotlin.math.abs(value)
-    val rounded = kotlin.math.round(abs * 100) / 100
-    val intPart = rounded.toLong()
-    val decPart = kotlin.math.round((rounded - intPart) * 100).toInt()
-    return "$sign$intPart.${decPart.toString().padStart(2, '0')}"
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -264,7 +256,7 @@ private fun SummaryCard(label: String, value: Double, color: Color, modifier: Mo
         Column( verticalArrangement = Arrangement.spacedBy(FinioSpacing.xxs)){
             FinioLabel(label)
             Text(
-                formatCurrency(value),
+                FinioFormat.currency(value),
                 style = FinioTypography.titleMedium,
                 color = color
             )
@@ -312,7 +304,7 @@ private fun SpendingByCategorySection(data: List<SpendingByCategory>){
                             .background(colors[index])
                     )
                     Spacer(Modifier.width(FinioSpacing.xxs))
-                    FinioBody("${item.category} · ${item.percentage}% · ${formatCurrency(item.total)}")
+                    FinioBody("${item.category} · ${item.percentage}% · ${FinioFormat.currency(item.total)}")
                 }
             }
         }

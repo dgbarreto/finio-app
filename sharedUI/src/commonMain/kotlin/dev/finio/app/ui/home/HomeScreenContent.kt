@@ -40,6 +40,8 @@ import dev.finio.designsystem.component.FinioTransactionType
 import dev.finio.designsystem.theme.FinioColors
 import dev.finio.designsystem.theme.FinioSpacing
 import dev.finio.designsystem.theme.FinioTypography
+import dev.finio.designsystem.util.FinioFormat
+import dev.finio.designsystem.util.FinioFormat.currency
 import dev.finio.transactions.domain.model.TransactionType
 import dev.finio.transactions.presentation.TransactionState
 import dev.finio.transactions.presentation.TransactionViewModel
@@ -86,7 +88,7 @@ fun HomeScreenContent(
                 summary?.let {
                     Column(verticalArrangement = Arrangement.spacedBy(FinioSpacing.md)) {
                         Text(
-                            text = formatCurrency(it.balance),
+                            text = FinioFormat.currency(it.balance),
                             style = FinioTypography.displayMedium,
                             color = if (it.balance >= 0) FinioColors.success else FinioColors.error
                         )
@@ -104,7 +106,7 @@ fun HomeScreenContent(
                             Column {
                                 FinioLabel("Income")
                                 Text(
-                                    formatCurrency(it.totalIncome),
+                                    FinioFormat.currency(it.totalIncome),
                                     style = FinioTypography.titleSmall,
                                     color = FinioColors.success
                                 )
@@ -112,7 +114,7 @@ fun HomeScreenContent(
                             Column(horizontalAlignment = Alignment.End) {
                                 FinioLabel("Expenses")
                                 Text(
-                                    formatCurrency(it.totalExpenses),
+                                    FinioFormat.currency(it.totalExpenses),
                                     style = FinioTypography.titleSmall,
                                     color = FinioColors.error
                                 )
@@ -151,7 +153,7 @@ fun HomeScreenContent(
                                 FinioCardTransaction(
                                     description = transaction.title,
                                     category = transaction.category.name,
-                                    amount = formatCurrency(transaction.amount),
+                                    amount = FinioFormat.currency(transaction.amount),
                                     date = transaction.date ?: "",
                                     type = if (transaction.type == TransactionType.INCOME)
                                         FinioTransactionType.Income
@@ -195,7 +197,7 @@ fun HomeScreenContent(
                                         ) {
                                             FinioBody(it.category)
                                             FinioLabel(
-                                                "${formatCurrency(it.spent)} / ${formatCurrency(it.limit)}"
+                                                "${FinioFormat.currency(it.spent)} / ${FinioFormat.currency(it.limit)}"
                                             )
                                         }
                                         LinearProgressIndicator(
@@ -238,13 +240,4 @@ private fun SectionHeader(title: String, onSeeAll: () -> Unit){
             modifier = Modifier.clickable { onSeeAll() }
         )
     }
-}
-
-private fun formatCurrency(value: Double): String {
-    val sign = if (value < 0) "-" else ""
-    val abs = kotlin.math.abs(value)
-    val rounded = kotlin.math.round(abs * 100) / 100
-    val intPart = rounded.toLong()
-    val decPart = kotlin.math.round((rounded - intPart) * 100).toInt()
-    return "$sign$$intPart.${decPart.toString().padStart(2, '0')}"
 }
