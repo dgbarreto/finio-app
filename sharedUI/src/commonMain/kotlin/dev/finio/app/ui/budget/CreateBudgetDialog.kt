@@ -27,6 +27,7 @@ import dev.finio.budget.domain.model.Budget
 import dev.finio.budget.domain.model.BudgetPeriod
 import dev.finio.designsystem.component.FinioBottomSheet
 import dev.finio.designsystem.component.FinioButton
+import dev.finio.designsystem.component.FinioDateField
 import dev.finio.designsystem.component.FinioTextField
 import dev.finio.designsystem.theme.FinioColors
 import dev.finio.designsystem.theme.FinioShape
@@ -134,14 +135,14 @@ fun CreateBudgetDialog(
                 }
             }
 
-            FinioTextField(
+            FinioDateField(
                 value = startDate,
                 onValueChange = { startDate = it },
                 label = "Start Date (YYYY-MM-DD)",
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
 
-            FinioTextField(
+            FinioDateField(
                 value = endDate,
                 onValueChange = { endDate = it },
                 label = "End Date (YYYY-MM-DD)",

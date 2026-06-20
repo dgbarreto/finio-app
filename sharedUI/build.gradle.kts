@@ -29,9 +29,6 @@ kotlin {
     iosSimulatorArm64()
     
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.compose.uiTooling)
-        }
         commonMain.dependencies {
             api(projects.sharedLogic)
             implementation(compose.runtime)
@@ -40,7 +37,6 @@ kotlin {
             implementation(compose.materialIconsExtended)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(compose.uiTooling)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
