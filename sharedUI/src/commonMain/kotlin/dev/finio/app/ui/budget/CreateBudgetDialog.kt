@@ -51,6 +51,29 @@ fun CreateBudgetDialog(
     var periodExpanded by remember { mutableStateOf(false) }
     var cateogoryExpanded by remember { mutableStateOf(false) }
 
+    var categoryError by remember { mutableStateOf<String?>(null) }
+    var limitError by remember { mutableStateOf<String?>(null) }
+    var startDateError by remember { mutableStateOf<String?>(null) }
+    var endDateError by remember { mutableStateOf<String?>(null) }
+
+    fun validate(): Boolean{
+        categoryError = if(category.isBlank()) "Category is required" else null
+        limitError = when{
+            limit.isBlank() -> "Limit is required"
+            limit.toDoubleOrNull() == null -> "Limmit must be a valid number"
+            limit.toDouble() <= 0 -> "Limit must be greater than zero"
+            else -> null
+        }
+        startDateError = if(startDate.isBlank()) "Start date is required" else null
+        endDateError = when{
+            endDate.isBlank() -> "End date is required"
+            startDate.isNotBlank() && endDate <= startDate -> "End date must be after"
+            else -> null
+        }
+
+        return categoryError == null && limitError == null && startDateError == null && endDateError == null
+    }
+
     FinioBottomSheet(
         onDismiss = onDismiss,
         title = if(isEditing) "Edit Budget" else "New Budget"
@@ -65,6 +88,10 @@ fun CreateBudgetDialog(
                     textStyle = FinioTypography.bodyMedium,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = cateogoryExpanded) },
                     shape = FinioShape.sm,
+                    isError = categoryError != null,
+                    supportingText = categoryError?.let {
+                        { Text(it, style = FinioTypography.labelSmall, color = FinioColors.error) }
+                    },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = FinioColors.primary,
                         unfocusedBorderColor = FinioColors.divider,
@@ -83,7 +110,11 @@ fun CreateBudgetDialog(
                     TransactionCategory.entries.forEach { option ->
                         DropdownMenuItem(
                             text = { Text(option.name.lowercase(), style = FinioTypography.bodyMedium, color = FinioColors.onBackground) },
-                            onClick = { category = option.name; cateogoryExpanded = false }
+                            onClick = {
+                                category = option.name
+                                cateogoryExpanded = false
+                                categoryError = null
+                            }
                         )
                     }
                 }
@@ -91,8 +122,12 @@ fun CreateBudgetDialog(
 
             FinioTextField(
                 value = limit,
-                onValueChange = { limit = it },
+                onValueChange = {
+                    limit = it
+                    limitError = null
+                },
                 label = "Limit",
+                errorText = limitError,
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
 
@@ -137,14 +172,22 @@ fun CreateBudgetDialog(
 
             FinioDateField(
                 value = startDate,
-                onValueChange = { startDate = it },
+                onValueChange = {
+                    startDate = it
+                    startDateError = null
+                },
                 label = "Start Date (YYYY-MM-DD)",
+                errorText = startDateError,
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
 
             FinioDateField(
                 value = endDate,
-                onValueChange = { endDate = it },
+                onValueChange = {
+                    endDate = it
+                    endDateError = null
+                },
+                errorText = endDateError,
                 label = "End Date (YYYY-MM-DD)",
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
@@ -154,8 +197,10 @@ fun CreateBudgetDialog(
             FinioButton(
                 text = if (isEditing) "Save" else "Add",
                 onClick = {
-                    val limitValue = limit.toDoubleOrNull() ?: 0.0
-                    onConfirm(category, limitValue, period, startDate, endDate)
+                    if(validate()){
+                        val limitValue = limit.toDoubleOrNull() ?: 0.0
+                        onConfirm(category, limitValue, period, startDate, endDate)
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             )

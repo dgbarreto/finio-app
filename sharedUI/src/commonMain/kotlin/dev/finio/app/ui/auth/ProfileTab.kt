@@ -18,7 +18,6 @@ object ProfileTab: Tab{
             title = "Profile",
             icon = painterResource(FinioIcons.profile)
         )
-
     @Composable
     override fun Content() {
         ProfileScreenContent()

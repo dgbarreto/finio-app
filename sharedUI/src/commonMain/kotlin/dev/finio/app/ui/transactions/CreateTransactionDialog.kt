@@ -52,6 +52,21 @@ fun CreateTransactionDialog(
     var typeExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
+    var titleError by remember { mutableStateOf<String?>(null) }
+    var amountError by remember { mutableStateOf<String?>(null) }
+
+    fun validate(): Boolean{
+        titleError = if(title.isBlank()) "Title is required" else null
+        amountError = when{
+            amount.isBlank() -> "Amount is required"
+            amount.toDoubleOrNull() == null -> "Amount must be a valid number"
+            amount.toDouble() <= 0 -> "Amount must be greater than zero"
+            else -> null
+        }
+
+        return titleError == null && amountError == null
+    }
+
     FinioBottomSheet(
         onDismiss = onDismiss,
         title = if(isEditing) "Edit Transaction" else "New Transaction"
@@ -59,14 +74,22 @@ fun CreateTransactionDialog(
         Column{
             FinioTextField(
                 value = title,
-                onValueChange = { title = it },
+                onValueChange = {
+                    title = it
+                    titleError = null
+                },
                 label = "Title",
+                errorText = titleError,
                 modifier = Modifier.fillMaxWidth()
             )
 
             FinioTextField(
                 value = amount,
-                onValueChange = { amount = it },
+                onValueChange = {
+                    amount = it
+                    amountError = null
+                },
+                errorText = amountError,
                 label = "Amount",
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
@@ -143,8 +166,10 @@ fun CreateTransactionDialog(
             FinioButton(
                 text = if (isEditing) "Save" else "Add",
                 onClick = {
-                    val parsedAmount = amount.toDoubleOrNull() ?: 0.0
-                    onConfirm(title, parsedAmount, type, category)
+                    if(validate()){
+                        val parsedAmount = amount.toDoubleOrNull() ?: 0.0
+                        onConfirm(title, parsedAmount, type, category)
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             )
