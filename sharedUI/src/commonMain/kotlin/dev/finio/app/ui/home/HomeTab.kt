@@ -10,6 +10,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import dev.finio.app.ui.budget.BudgetTab
 import dev.finio.app.ui.transactions.TransactionsTab
+import dev.finio.designsystem.icon.FinioIcons
+import org.jetbrains.compose.resources.painterResource
 
 object HomeTab: Tab{
     override val options: TabOptions
@@ -17,7 +19,7 @@ object HomeTab: Tab{
         get() = TabOptions(
             index = 0u,
             title = "Home",
-            icon = rememberVectorPainter(Icons.Filled.Home)
+            icon = painterResource(FinioIcons.home)
         )
 
     @Composable

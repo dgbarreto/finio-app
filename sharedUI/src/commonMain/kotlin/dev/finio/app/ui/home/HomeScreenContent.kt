@@ -37,6 +37,7 @@ import dev.finio.designsystem.component.FinioErrorState
 import dev.finio.designsystem.component.FinioHeadline
 import dev.finio.designsystem.component.FinioLabel
 import dev.finio.designsystem.component.FinioTransactionType
+import dev.finio.designsystem.icon.FinioIcons
 import dev.finio.designsystem.theme.FinioColors
 import dev.finio.designsystem.theme.FinioSpacing
 import dev.finio.designsystem.theme.FinioTypography
@@ -143,7 +144,7 @@ fun HomeScreenContent(
                 is TransactionState.Success -> {
                     if (s.transactions.isEmpty()) {
                         FinioEmptyState(
-                            icon = "💸",
+                            icon = FinioIcons.emptyTransactions,
                             title = "No transactions yet",
                             message = "Add your first transaction in the Transactions tab."
                         )
@@ -182,7 +183,7 @@ fun HomeScreenContent(
                 is BudgetState.Success -> {
                     if (current.budgets.isEmpty()) {
                         FinioEmptyState(
-                            icon = "🎯",
+                            icon = FinioIcons.emptyBudgets,
                             title = "No budgets yet",
                             message = "Create a budget in the Budget tab."
                         )

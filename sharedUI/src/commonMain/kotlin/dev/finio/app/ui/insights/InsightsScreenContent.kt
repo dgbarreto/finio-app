@@ -53,6 +53,7 @@ import dev.finio.designsystem.component.FinioCard
 import dev.finio.designsystem.component.FinioErrorState
 import dev.finio.designsystem.component.FinioHeadline
 import dev.finio.designsystem.component.FinioLabel
+import dev.finio.designsystem.icon.FinioIcons
 import dev.finio.designsystem.theme.FinioColors
 import dev.finio.designsystem.theme.FinioShape
 import dev.finio.designsystem.theme.FinioSpacing
@@ -155,6 +156,7 @@ fun InsightsScreenContent(){
                 ) { CircularProgressIndicator(color = FinioColors.primary) }
 
                 state.error != null -> FinioErrorState(
+                    icon = FinioIcons.error,
                     message = state.error!!,
                     onRetry = {
                         val (start, end) = selectedPeriod.toDateRange()

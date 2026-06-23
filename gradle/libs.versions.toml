@@ -37,7 +37,7 @@ voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", vers
 voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
 
 # Finio modules
-finio-design-system = { module = "dev.finio:design-system-kmp", version = "0.1.3" }
+finio-design-system = { module = "dev.finio:design-system-kmp", version = "0.1.5" }
 finio-auth = { module = "dev.finio:auth-kmp", version = "0.1.4" }
 finio-transaction = { module = "dev.finio:transactions-kmp", version = "0.1.3" }
 finio-budget = { module = "dev.finio:budget-kmp", version = "0.1.2" }

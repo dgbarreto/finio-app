@@ -79,4 +79,9 @@ if (useLocalTransactions) {
             substitute(module("dev.finio:auth-kmp")).using(project(":auth"))
         }
     }
+    includeBuild("../finio-design-system") {
+        dependencySubstitution {
+            substitute(module("dev.finio:design-system-kmp")).using(project(":designsystem"))
+        }
+    }
 }

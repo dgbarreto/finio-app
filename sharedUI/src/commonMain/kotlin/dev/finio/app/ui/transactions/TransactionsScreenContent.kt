@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import dev.finio.designsystem.component.FinioEmptyState
 import dev.finio.designsystem.component.FinioErrorState
 import dev.finio.designsystem.component.FinioTextField
+import dev.finio.designsystem.icon.FinioIcons
 import dev.finio.designsystem.theme.FinioColors
 import dev.finio.designsystem.theme.FinioShape
 import dev.finio.designsystem.theme.FinioSpacing
@@ -114,7 +115,8 @@ fun TransactionsScreenContent(){
                     is TransactionState.Error -> {
                         FinioErrorState(
                             message = current.message,
-                            onRetry = { viewModel.sync() }
+                            onRetry = { viewModel.sync() },
+                            icon = FinioIcons.error
                         )
                     }
 
@@ -130,7 +132,7 @@ fun TransactionsScreenContent(){
 
                         if (filtered.isEmpty()) {
                             FinioEmptyState(
-                                icon = "💸",
+                                icon = FinioIcons.emptyTransactions,
                                 title = "No transactions yet",
                                 message = "Tap the + button to add your first transaction"
                             )

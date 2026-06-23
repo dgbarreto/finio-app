@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import dev.finio.designsystem.icon.FinioIcons
+import org.jetbrains.compose.resources.painterResource
 
 object ProfileTab: Tab{
     override val options: TabOptions
@@ -14,7 +16,7 @@ object ProfileTab: Tab{
         get() = TabOptions(
             index = 4u,
             title = "Profile",
-            icon = rememberVectorPainter(Icons.Filled.VerifiedUser)
+            icon = painterResource(FinioIcons.profile)
         )
 
     @Composable

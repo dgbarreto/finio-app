@@ -31,6 +31,7 @@ import dev.finio.budget.presentation.BudgetState
 import dev.finio.budget.presentation.BudgetViewModel
 import dev.finio.designsystem.component.FinioEmptyState
 import dev.finio.designsystem.component.FinioErrorState
+import dev.finio.designsystem.icon.FinioIcons
 import org.koin.compose.koinInject
 
 @Composable
@@ -78,6 +79,7 @@ fun BudgetScreenContent(){
 
                     is BudgetState.Error -> {
                         FinioErrorState(
+                            icon = FinioIcons.error,
                             message = current.message,
                             onRetry = { viewModel.load() }
                         )
@@ -86,7 +88,7 @@ fun BudgetScreenContent(){
                     is BudgetState.Success -> {
                         if (current.budgets.isEmpty()) {
                             FinioEmptyState(
-                                icon = "🎯",
+                                icon = FinioIcons.emptyBudgets,
                                 title = "No budgets yet",
                                 message = "Created a budget to start tracking your spending limits."
                             )
