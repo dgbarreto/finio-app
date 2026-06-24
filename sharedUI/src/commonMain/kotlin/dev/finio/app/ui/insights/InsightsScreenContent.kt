@@ -155,14 +155,16 @@ fun InsightsScreenContent(){
                     contentAlignment = Alignment.Center
                 ) { CircularProgressIndicator(color = FinioColors.primary) }
 
-                state.error != null -> FinioErrorState(
-                    icon = FinioIcons.error,
-                    message = state.error!!,
-                    onRetry = {
-                        val (start, end) = selectedPeriod.toDateRange()
-                        viewModel.loadAll(start, end, selectedPeriod.evolutionMonths)
-                    }
-                )
+                state.error != null -> {
+                    FinioErrorState(
+                        icon = FinioIcons.error,
+                        message = state.error!!,
+                        onRetry = {
+                            val (start, end) = selectedPeriod.toDateRange()
+                            viewModel.loadAll(start, end, selectedPeriod.evolutionMonths)
+                        }
+                    )
+                }
 
                 else -> {
                     state.summary?.let {

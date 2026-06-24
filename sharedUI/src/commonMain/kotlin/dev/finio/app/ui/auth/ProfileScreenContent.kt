@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import dev.finio.app.observability.FinioObservability
 import dev.finio.auth.domain.model.AuthState
 import dev.finio.auth.presentation.AuthViewModel
 import dev.finio.designsystem.component.FinioBody
@@ -79,7 +80,10 @@ fun ProfileScreenContent(){
                 contentAlignment = Alignment.Center
             ) { CircularProgressIndicator(color = FinioColors.primary) }
 
-            is AuthState.Error -> FinioBody(s.message)
+            is AuthState.Error -> {
+                FinioObservability.captureError(s.message)
+                FinioBody(s.message)
+            }
 
             is AuthState.Authenticated -> {
                 val user = s.user

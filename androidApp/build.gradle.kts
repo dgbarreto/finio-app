@@ -1,4 +1,15 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) load(file.inputStream())
+}
+
+fun sentryDsn(): String =
+    localProperties["SENTRY_DSN"] as String?
+        ?: System.getenv("SENTRY_DSN")
+        ?: ""
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -14,13 +25,13 @@ kotlin {
 dependencies {
     implementation(libs.androidx.material3)
     implementation(projects.sharedUI)
-
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
-
     implementation(libs.voyager.navigator)
-
     implementation(libs.compose.uiToolingPreview)
+    implementation(libs.sentry.android)
+    implementation(libs.sentry.compose)
+
     debugImplementation(libs.compose.uiTooling)
 }
 
@@ -40,11 +51,25 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    buildFeatures{
+        buildConfig = true
+    }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
+
+        debug {
+            buildConfigField("String", "SENTRY_DSN", "\"${sentryDsn() ?: ""}\"")
+            buildConfigField("String", "BUILD_TYPE", "\"debug\"")
+        }
+        release {
+            buildConfigField("String", "SENTRY_DSN", "\"${sentryDsn() ?: ""}\"")
+            buildConfigField("String", "BUILD_TYPE", "\"release\"")
+        }
+
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

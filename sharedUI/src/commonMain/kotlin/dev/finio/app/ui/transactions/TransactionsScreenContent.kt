@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.BeyondBoundsLayout
 import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.text.style.LineHeightStyle
+import dev.finio.app.observability.FinioObservability
 import dev.finio.designsystem.component.FinioEmptyState
 import dev.finio.designsystem.component.FinioErrorState
 import dev.finio.designsystem.component.FinioTextField
@@ -113,6 +114,8 @@ fun TransactionsScreenContent(){
                     }
 
                     is TransactionState.Error -> {
+                        FinioObservability.captureError(current.message)
+
                         FinioErrorState(
                             message = current.message,
                             onRetry = { viewModel.sync() },

@@ -27,9 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.finio.app.observability.FinioObservability
 import dev.finio.budget.presentation.BudgetState
 import dev.finio.budget.presentation.BudgetViewModel
 import dev.finio.designsystem.component.FinioBody
+import dev.finio.designsystem.component.FinioButton
+import dev.finio.designsystem.component.FinioButtonVariant
 import dev.finio.designsystem.component.FinioCard
 import dev.finio.designsystem.component.FinioCardTransaction
 import dev.finio.designsystem.component.FinioEmptyState
@@ -136,10 +139,14 @@ fun HomeScreenContent(
                     contentAlignment = Alignment.Center
                 ) { CircularProgressIndicator(color = FinioColors.primary) }
 
-                is TransactionState.Error -> FinioErrorState(
-                    message = s.message,
-                    onRetry = { transactionViewModel.sync() }
-                )
+                is TransactionState.Error -> {
+                    FinioObservability.captureError(s.message)
+
+                    FinioErrorState(
+                        message = s.message,
+                        onRetry = { transactionViewModel.sync() }
+                    )
+                }
 
                 is TransactionState.Success -> {
                     if (s.transactions.isEmpty()) {
@@ -175,10 +182,14 @@ fun HomeScreenContent(
                     contentAlignment = Alignment.Center
                 ) { CircularProgressIndicator(color = FinioColors.primary) }
 
-                is BudgetState.Error -> FinioErrorState(
-                    message = current.message,
-                    onRetry = { budgetViewModel.load() }
-                )
+                is BudgetState.Error -> {
+                    FinioObservability.captureError(current.message)
+
+                    FinioErrorState(
+                        message = current.message,
+                        onRetry = { budgetViewModel.load() }
+                    )
+                }
 
                 is BudgetState.Success -> {
                     if (current.budgets.isEmpty()) {

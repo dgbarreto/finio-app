@@ -3,6 +3,7 @@ package dev.finio.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import cafe.adriel.voyager.navigator.Navigator
+import dev.finio.app.observability.FinioObservability
 import dev.finio.app.ui.auth.LoginScreen
 import dev.finio.app.ui.home.HomeScreen
 import dev.finio.auth.event.AuthEvent
@@ -17,6 +18,12 @@ fun AppNavigator(
     val startScreen = if(isLoggedIn) HomeScreen else LoginScreen
 
     Navigator(startScreen){ navigator ->
+        LaunchedEffect(navigator.lastItem){
+            FinioObservability.addBreadcrumb(
+                navigator.lastItem::class.simpleName ?: "Unknown"
+            )
+        }
+
         LaunchedEffect(Unit){
             authEventBus.events.collect { event ->
                 when(event){

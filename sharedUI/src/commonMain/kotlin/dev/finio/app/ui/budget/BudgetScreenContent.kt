@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import dev.finio.app.observability.FinioObservability
 import dev.finio.budget.domain.model.Budget
 import dev.finio.budget.presentation.BudgetState
 import dev.finio.budget.presentation.BudgetViewModel
@@ -78,6 +79,10 @@ fun BudgetScreenContent(){
                     }
 
                     is BudgetState.Error -> {
+                        FinioObservability.captureError(
+                            current.message
+                        )
+
                         FinioErrorState(
                             icon = FinioIcons.error,
                             message = current.message,

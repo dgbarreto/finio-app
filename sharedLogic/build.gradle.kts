@@ -41,6 +41,9 @@ kotlin {
             api(libs.finio.design.system)
             api(libs.koin.core)
         }
+        androidMain.dependencies {
+            implementation(libs.sentry.android)
+        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
