@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
@@ -31,6 +32,8 @@ dependencies {
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.sentry.android)
     implementation(libs.sentry.compose)
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation(libs.firebase.messaging)
 
     debugImplementation(libs.compose.uiTooling)
 }

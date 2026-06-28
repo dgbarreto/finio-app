@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "652937867656",
+    "project_id": "finio-d0a12",
+    "storage_bucket": "finio-d0a12.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:652937867656:android:6da578757652c43a534a3d",
+        "android_client_info": {
+          "package_name": "dev.finio.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZKpa2PDt1-3hRgAqM1QoEJ9x66Lg23-o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
