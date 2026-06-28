@@ -1,0 +1,20 @@
+appId: dev.finio.app
+---
+- clearState
+- launchApp
+
+# Fechar dialog de compatibilidade 16KB se aparecer
+- runFlow:
+    when:
+      visible: "OK"
+    commands:
+      - tapOn: "OK"
+
+- assertVisible: "Email"
+- assertVisible: "Password"
+- tapOn: "Email"
+- inputText: ${FINIO_EMAIL}
+- tapOn: "Password"
+- inputText: ${FINIO_PASSWORD}
+- tapOn: "Login"
+- assertVisible: "Hello 👋"

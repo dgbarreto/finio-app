@@ -1,0 +1,26 @@
+appId: dev.finio.app
+---
+- assertVisible: "Hello 👋"
+- assertVisible: "Here's your financial summary"
+- assertVisible: "Recent Transactions"
+- assertVisible: "Budget Overview"
+
+# Navegar para Transactions
+- tapOn: "Transactions"
+- assertVisible: "Transactions"
+
+# Voltar para Home
+- tapOn: "Home"
+- assertVisible: "Hello 👋"
+
+# Navegar para Budget
+- tapOn: "Budget"
+- assertVisible: "Budget"
+
+# Navegar para Insights
+- tapOn: "Insights"
+- assertVisible: "Insights"
+
+# Navegar para Profile
+- tapOn: "Profile"
+- assertVisible: "Profile"

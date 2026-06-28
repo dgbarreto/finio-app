@@ -1,0 +1,27 @@
+appId: dev.finio.app
+---
+- launchApp
+
+- runFlow:
+    when:
+      visible: "OK"
+    commands:
+      - tapOn: "OK"
+
+- tapOn: "Budget"
+
+- tapOn:
+    point: "90%,83%"
+- assertVisible: "New Budget"
+
+# Verificar que os campos estão presentes
+- assertVisible: "Category"
+- assertVisible: "Limit"
+- assertVisible: "Start Date (YYYY-MM-DD)"
+- assertVisible: "End Date (YYYY-MM-DD)"
+
+# Fechar o bottom sheet tocando na área acima dele (Close sheet bounds: [0,0][1344,1049])
+- tapOn:
+    point: "50%,30%"
+
+- assertNotVisible: "New Budget"

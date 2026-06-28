@@ -1,0 +1,24 @@
+appId: dev.finio.app
+---
+- launchApp
+
+- runFlow:
+    when:
+      visible: "OK"
+    commands:
+      - tapOn: "OK"
+
+- tapOn: "Transactions"
+
+# Tap no FAB pelo ponto (canto inferior direito)
+- tapOn:
+    point: "90%,83%"
+- assertVisible: "New Transaction"
+
+- tapOn: "Title"
+- inputText: "Test Transaction"
+- tapOn: "Amount"
+- inputText: "100"
+- tapOn: "Add"
+
+- assertVisible: "Test Transaction"
