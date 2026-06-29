@@ -3,6 +3,7 @@ package dev.finio.app
 import android.app.Application
 import dev.finio.app.di.appModules
 import dev.finio.app.di.createDriverFactory
+import dev.finio.app.di.sharedLogicModule
 import dev.finio.auth.storage.AndroidTokenStorage
 import io.sentry.android.core.SentryAndroid
 import org.koin.android.ext.koin.androidContext
@@ -26,7 +27,7 @@ class FinioApplication: Application(){
             androidContext(this@FinioApplication)
 
             modules(
-                appModules(
+                listOf(sharedLogicModule) + appModules(
                     baseUrl = "https://finio-api-production.up.railway.app",
                     driverFactory = createDriverFactory(this@FinioApplication)
                 )

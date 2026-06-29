@@ -40,6 +40,7 @@ kotlin {
             api(libs.finio.insights)
             api(libs.finio.design.system)
             api(libs.koin.core)
+            implementation(libs.kotlinx.coroutines.core)
         }
         androidMain.dependencies {
             implementation(libs.sentry.android)
