@@ -8,7 +8,25 @@ plugins {
 }
 
 kotlin {
-    
+    val iosDeploymentTarget = libs.versions.ios.deploymentTarget.get()
+
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        val platform = if (iosTarget.name.contains("Simulator")) "ios-simulator" else "ios"
+        iosTarget.binaries.all {
+            linkerOpts += listOf(
+                "-Wl,-platform_version,$platform,$iosDeploymentTarget,$iosDeploymentTarget",
+                "-Wl,-U,_OBJC_CLASS_\$_UIViewLayoutRegion"
+            )
+        }
+        iosTarget.binaries.framework {
+            baseName = "SharedUI"
+            isStatic = true
+        }
+    }
+
     androidLibrary {
        namespace = "dev.finio.app.sharedUI"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -54,4 +72,10 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(compose.uiTooling)
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "dev.finio.app.sharedui.generated.resources"
+    generateResClass = auto
 }

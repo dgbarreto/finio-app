@@ -16,8 +16,6 @@ import dev.finio.auth.domain.model.AuthState
 import dev.finio.auth.presentation.AuthViewModel
 import org.jetbrains.compose.resources.painterResource
 
-import finioapp.sharedui.generated.resources.Res
-import finioapp.sharedui.generated.resources.compose_multiplatform
 import org.koin.compose.koinInject
 
 @Composable

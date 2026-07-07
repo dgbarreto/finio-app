@@ -14,6 +14,7 @@ material3 = "1.4.0"
 sentry = "7.14.0"
 firebase-bom = "33.7.0"
 kotlinx-coroutines = "1.10.2"
+ios-deploymentTarget = "18.5"
 
 [libraries]
 # Compose
