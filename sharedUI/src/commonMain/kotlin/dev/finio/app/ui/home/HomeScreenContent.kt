@@ -162,7 +162,7 @@ fun HomeScreenContent(
                                     description = transaction.title,
                                     category = transaction.category.name,
                                     amount = FinioFormat.currency(transaction.amount),
-                                    date = transaction.date ?: "",
+                                    date = FinioFormat.date(transaction.date ?: ""),
                                     type = if (transaction.type == TransactionType.INCOME)
                                         FinioTransactionType.Income
                                     else

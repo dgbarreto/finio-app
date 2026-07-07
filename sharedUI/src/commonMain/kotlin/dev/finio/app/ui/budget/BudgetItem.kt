@@ -27,6 +27,7 @@ import dev.finio.designsystem.component.FinioHeadline
 import dev.finio.designsystem.component.FinioLabel
 import dev.finio.designsystem.theme.FinioColors
 import dev.finio.designsystem.theme.FinioSpacing
+import dev.finio.designsystem.util.FinioFormat
 
 @Composable
 fun BudgetItem(budget: Budget, onDelete: () -> Unit, onChange: ((Budget) -> Unit)?){
@@ -41,6 +42,7 @@ fun BudgetItem(budget: Budget, onDelete: () -> Unit, onChange: ((Budget) -> Unit
             Column(modifier = Modifier.weight(1f)){
                 FinioHeadline(budget.category)
                 FinioLabel("${budget.spent} of ${budget.limit}")
+                FinioLabel("${FinioFormat.date(budget.startDate)} → ${FinioFormat.date(budget.endDate)}")
             }
             Row {
                 FinioButton(

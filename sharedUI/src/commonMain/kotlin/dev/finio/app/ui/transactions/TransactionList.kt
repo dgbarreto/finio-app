@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.finio.designsystem.component.FinioCardTransaction
 import dev.finio.designsystem.component.FinioTransactionType
+import dev.finio.designsystem.util.FinioFormat
 import dev.finio.transactions.domain.model.Transaction
 import dev.finio.transactions.domain.model.TransactionType
 
@@ -39,7 +40,7 @@ fun TransactionItem(transaction: Transaction, onTransactionSelected: ((transacti
         description = transaction.title,
         category = transaction.category.name,
         amount = transaction.amount.toString(),
-        date = transaction.date,
+        date = FinioFormat.date(transaction.date ?: ""),
         type = if(transaction.type == TransactionType.INCOME)
             FinioTransactionType.Income else FinioTransactionType.Expense,
         onClick = {
