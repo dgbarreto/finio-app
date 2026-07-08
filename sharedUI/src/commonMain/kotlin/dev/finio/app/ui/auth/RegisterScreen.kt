@@ -22,6 +22,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.finio.app.ui.home.HomeScreen
+import dev.finio.auth.domain.model.AuthError
 import dev.finio.auth.domain.model.AuthState
 import dev.finio.auth.presentation.AuthViewModel
 import dev.finio.designsystem.component.FinioButton
@@ -88,8 +89,14 @@ object RegisterScreen: Screen{
                 Spacer(modifier = Modifier.height(8.dp))
 
                 if (authState is AuthState.Error) {
+                    val message = when ((authState as AuthState.Error).error){
+                        is AuthError.InvalidCredentials -> "Invalid email or password."
+                        is AuthError.NetworkError -> "Connection error. Please try again."
+                        is AuthError.Unknown -> "Something went wrong. Please try again."
+                    }
+
                     Text(
-                        text = (authState as AuthState.Error).message,
+                        text = message,
                         color = androidx.compose.ui.graphics.Color.Red
                     )
                     Spacer(modifier = Modifier.height(8.dp))

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import dev.finio.app.observability.FinioObservability
+import dev.finio.auth.domain.model.AuthError
 import dev.finio.auth.domain.model.AuthState
 import dev.finio.auth.presentation.AuthViewModel
 import dev.finio.designsystem.component.FinioBody
@@ -81,8 +82,14 @@ fun ProfileScreenContent(){
             ) { CircularProgressIndicator(color = FinioColors.primary) }
 
             is AuthState.Error -> {
-                FinioObservability.captureError(s.message)
-                FinioBody(s.message)
+                val message = when ((s as AuthState.Error).error){
+                    is AuthError.InvalidCredentials -> "Invalid email or password."
+                    is AuthError.NetworkError -> "Connection error. Please try again."
+                    is AuthError.Unknown -> "Something went wrong. Please try again."
+                }
+
+                FinioObservability.captureError(message)
+                FinioBody(message)
             }
 
             is AuthState.Authenticated -> {
